@@ -6,6 +6,8 @@ const mocks = vi.hoisted(() => ({
   groqCreate: vi.fn(),
 }));
 
+vi.mock("server-only", () => ({}));
+
 vi.mock("@/services/kisApi", () => ({
   fetchDomesticStocksFromKis: mocks.fetchDomesticStocksFromKis,
   fetchForeignStocksFromKis: mocks.fetchForeignStocksFromKis,
@@ -109,6 +111,12 @@ describe("GET /api/stocks", () => {
     expect(res.status).toBe(200);
     expect(res.headers.get("X-Stock-Source")).toBe("groq");
     expect(body[0].symbol).toBe("AAA");
+    expect(mocks.groqCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        model: "openai/gpt-oss-120b",
+        response_format: { type: "json_object" },
+      })
+    );
   });
 
   it("returns 503 when foreign KIS call fails", async () => {

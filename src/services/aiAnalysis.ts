@@ -2,7 +2,7 @@ import "server-only";
 
 import type { StockHistoryPoint, StockPriceSnapshot } from "@/types/stock";
 
-export const MODEL_NAME = "llama-3.3-70b-versatile";
+export const MODEL_NAME = "openai/gpt-oss-120b";
 
 export const systemPrompt = [
   "당신은 월스트리트 금융 분석 전문가입니다.",
