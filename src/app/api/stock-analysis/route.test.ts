@@ -6,8 +6,10 @@ const mocks = vi.hoisted(() => ({
   groqCreate: vi.fn(),
 }));
 
-vi.mock("@/services/aiAnalysis", () => ({
-  MODEL_NAME: "llama-3.3-70b-versatile",
+vi.mock("server-only", () => ({}));
+
+vi.mock("@/services/aiAnalysis", async () => ({
+  ...(await vi.importActual<typeof import("@/services/aiAnalysis")>("@/services/aiAnalysis")),
   systemPrompt: "system prompt",
   fetchNewsContext: mocks.fetchNewsContext,
   buildUserPrompt: mocks.buildUserPrompt,
@@ -90,6 +92,13 @@ describe("POST /api/stock-analysis", () => {
     const res = await POST(req);
     const text = await res.text();
 
+    expect(mocks.groqCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        model: "openai/gpt-oss-120b",
+        response_format: { type: "json_object" },
+        stream: true,
+      })
+    );
     expect(res.status).toBe(200);
     expect(res.headers.get("Content-Type")).toContain("text/plain");
     expect(text).toBe('{"sentiment":"Bullish","summary":"ok"}');

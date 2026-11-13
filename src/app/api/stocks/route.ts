@@ -1,4 +1,5 @@
 import Groq from "groq-sdk";
+import { MODEL_NAME } from "@/services/aiAnalysis";
 import { HISTORY_POINT_COUNT } from "@/constants/history";
 import type { Stock, StockHistoryPoint } from "@/types/stock";
 import {
@@ -131,7 +132,7 @@ const fetchStocksFromGroq = async (): Promise<Stock[]> => {
   ].join("\n");
 
   const completion = await groq.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
+    model: MODEL_NAME,
     temperature: 0.2,
     response_format: { type: "json_object" },
     messages: [
